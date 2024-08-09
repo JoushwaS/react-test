@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Formik, Form } from "formik";
+import { Formik, Form, FormikState } from "formik";
 import * as Yup from "yup";
 import Step1 from "../StepsComponents/Step1";
 import Step2 from "../StepsComponents/Step2";
@@ -13,6 +13,18 @@ type ValidationSchemas = {
   step3: Yup.ObjectSchema<any, Yup.AnyObject>;
 };
 
+const getStepComponent = (step: number): React.ReactNode => {
+  switch (step) {
+    case 1:
+      return <Step1 />;
+    case 2:
+      return <Step2 />;
+    case 3:
+      return <Step3 />;
+    default:
+      return null; // Or a default component/error message
+  }
+};
 // Validation schemas
 const validationSchemas: ValidationSchemas = {
   step1: Yup.object({
@@ -41,14 +53,26 @@ const MainForm: React.FC = () => {
     step2: { age: 0, gender: "" },
     step3: { address: "", city: "" },
   };
-
   // Handle next step
   const handleNext = (
     values: FormValues,
-    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+    {
+      setSubmitting,
+      setTouched,
+    }: {
+      setSubmitting: (isSubmitting: boolean) => void;
+      setTouched: (touched: Record<string, boolean>) => void;
+    }
   ) => {
     if (step < 3) {
       setStep((prevStep) => prevStep + 1);
+
+      // Manually set touched state for the next step
+      if (step === 1) {
+        setTouched({ age: true, gender: true });
+      } else if (step === 2) {
+        setTouched({ address: true, city: true });
+      }
     } else {
       // Handle final form submission
       alert("Your application has been submitted successfully!");
@@ -56,7 +80,6 @@ const MainForm: React.FC = () => {
     }
     setSubmitting(false); // Set submitting to false after handling
   };
-
   // Handle the "Back" button click
   const handleBack = () => setStep((prevStep) => prevStep - 1);
 
@@ -66,20 +89,20 @@ const MainForm: React.FC = () => {
       validationSchema={
         validationSchemas[`step${step}` as keyof ValidationSchemas]
       }
-      onSubmit={(values, { setSubmitting }) => {
-        handleNext(values, { setSubmitting });
+      onSubmit={(values, { setSubmitting, setTouched }) => {
+        console.log(values);
+        handleNext(values, { setSubmitting, setTouched });
       }}
     >
-      {({ isSubmitting, errors }) => (
+      {({ isSubmitting, errors, touched, handleSubmit }) => (
         <Form className="w-full max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-md">
-          {step === 1 && <Step1 />}
-          {step === 2 && <Step2 />}
-          {step === 3 && <Step3 />}
+          {getStepComponent(step)}
+
           {/* Debugging Information */}
           <div className="mt-4">
             <h3 className="text-lg font-semibold">Debug Info</h3>
-            <pre className="bg-gray-100 p-2 rounded-md text-bla">
-              {JSON.stringify({ errors }, null, 2)}
+            <pre className="bg-gray-100 p-2 rounded-md text-black">
+              {JSON.stringify({ errors, touched }, null, 2)}
             </pre>
           </div>
           <div className="flex justify-between mt-6">
@@ -94,8 +117,9 @@ const MainForm: React.FC = () => {
             )}
 
             <button
-              type="submit"
+              // type="submit"
               disabled={isSubmitting}
+              onClick={handleSubmit}
               className="bg-blue-500 text-white py-2 px-4 rounded-md"
             >
               {step === 3 ? "Submit" : "Next"}

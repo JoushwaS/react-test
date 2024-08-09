@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Formik, Form, FormikState } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Step1 from "../StepsComponents/Step1";
 import Step2 from "../StepsComponents/Step2";
 import Step3 from "../StepsComponents/Step3";
 import { FormValues } from "../../types/types";
+import { Link } from "react-router-dom";
 
 // Define the type for validation schemas
 type ValidationSchemas = {
@@ -124,6 +125,10 @@ const MainForm: React.FC = () => {
             >
               {step === 3 ? "Submit" : "Next"}
             </button>
+
+            <Link to="/test-page" className="px-6 py-3 underline">
+              Go Test Page
+            </Link>
           </div>
         </Form>
       )}

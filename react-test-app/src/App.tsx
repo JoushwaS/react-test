@@ -1,10 +1,12 @@
 import "./App.css";
-import MainForm from "./components/MainForm/MainForm";
-
+import { BrowserRouter as Router } from "react-router-dom";
+import Routes from "./Routes/Router";
 function App() {
   return (
     <>
-      <MainForm />
+      <Router>
+        <Routes />
+      </Router>
     </>
   );
 }

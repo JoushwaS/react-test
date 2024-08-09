@@ -1,10 +1,10 @@
 import "./App.css";
-import UserCRUD from "./components/UserCRUD";
+import MainForm from "./components/MainForm/MainForm";
 
 function App() {
   return (
     <>
-      <UserCRUD />
+      <MainForm />
     </>
   );
 }

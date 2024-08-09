@@ -45,14 +45,18 @@ const UserCRUD: React.FC = () => {
         </button>
       </div>
       <ul className="space-y-2">
-        {users.map((user) => (
-          <UserListItem
-            key={user.id}
-            user={user}
-            onUpdateUser={handleUpdateUser}
-            onDeleteUser={handleDeleteUser}
-          />
-        ))}
+        {users.length != 0 ? (
+          users.map((user) => (
+            <UserListItem
+              key={user.id}
+              user={user}
+              onUpdateUser={handleUpdateUser}
+              onDeleteUser={handleDeleteUser}
+            />
+          ))
+        ) : (
+          <h1 className="text-xl text-black">No Users... </h1>
+        )}
       </ul>
     </div>
   );
